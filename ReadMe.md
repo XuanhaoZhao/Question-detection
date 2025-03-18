@@ -97,7 +97,6 @@ CREATE TABLE user_mistakes (
   FOREIGN KEY (question_id) REFERENCES questions(id)
 );
 ```
-```
 
 
 初始页面设计
