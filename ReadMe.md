@@ -1,90 +1,103 @@
-数据库设计
+```markdown
+# 数据库设计
 基于功能需求设计数据库，初期使用关系型数据库（如MySQL或PostgreSQL）更合适，后期根据流量需求可以引入NoSQL（如MongoDB）用作缓存。
 
-数据库结构设计
-用户表（users）
+---
+
+## 数据库结构设计
+
+### 用户表（users）
 存储用户基本信息和权限状态。
-sql
-
-Copy
+```sql
 CREATE TABLE users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50) NOT NULL UNIQUE,
-    email VARCHAR(100),
-    password_hash VARCHAR(255) NOT NULL,
-    role ENUM('student', 'teacher', 'admin') DEFAULT 'student',
-    subscription_status ENUM('free', 'premium') DEFAULT 'free',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(50) NOT NULL UNIQUE,
+  email VARCHAR(100),
+  password_hash VARCHAR(255) NOT NULL,
+  role ENUM('student', 'teacher', 'admin') DEFAULT 'student',
+  subscription_status ENUM('free', 'premium') DEFAULT 'free',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-题目表（questions）
+```
+
+---
+
+### 题目表（questions）
 存储题目信息，包括原题和解析。
-sql
-
-Copy
+```sql
 CREATE TABLE questions (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    title TEXT NOT NULL,
-    content TEXT NOT NULL,
-    topic_tags VARCHAR(255), -- 题目分类标签
-    difficulty ENUM('easy', 'medium', 'hard'),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  title TEXT NOT NULL,
+  content TEXT NOT NULL,
+  topic_tags VARCHAR(255), -- 题目分类标签
+  difficulty ENUM('easy', 'medium', 'hard'),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-OCR记录表（ocr_records）
+```
+
+---
+
+### OCR记录表（ocr_records）
 存储用户上传的图片OCR结果。
-sql
-
-Copy
+```sql
 CREATE TABLE ocr_records (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    image_url VARCHAR(255) NOT NULL, -- 上传图片的存储路径
-    ocr_text TEXT NOT NULL, -- OCR识别的文本
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id)
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  image_url VARCHAR(255) NOT NULL, -- 上传图片的存储路径
+  ocr_text TEXT NOT NULL, -- OCR识别的文本
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id)
 );
-AI解析记录表（ai_explanations）
+```
+
+---
+
+### AI解析记录表（ai_explanations）
 存储用户请求AI解析的记录。
-sql
-
-Copy
+```sql
 CREATE TABLE ai_explanations (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    question_id INT NOT NULL,
-    explanation TEXT NOT NULL, -- AI生成的解析
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (question_id) REFERENCES questions(id)
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  question_id INT NOT NULL,
+  explanation TEXT NOT NULL, -- AI生成的解析
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id),
+  FOREIGN KEY (question_id) REFERENCES questions(id)
 );
-支付记录表（payments）
+```
+
+---
+
+### 支付记录表（payments）
 用于记录用户的支付信息。
-sql
-
-Copy
+```sql
 CREATE TABLE payments (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    amount DECIMAL(10, 2) NOT NULL,
-    payment_method ENUM('wechat', 'alipay'),
-    status ENUM('pending', 'completed', 'failed'),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id)
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  amount DECIMAL(10, 2) NOT NULL,
+  payment_method ENUM('wechat', 'alipay'),
+  status ENUM('pending', 'completed', 'failed'),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id)
 );
-错题本表（user_mistakes）
+```
+
+---
+
+### 错题本表（user_mistakes）
 用于记录用户的错题。
-sql
-
-Copy
+```sql
 CREATE TABLE user_mistakes (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    question_id INT NOT NULL,
-    mistake_type ENUM('wrong', 'skipped'), -- 错题类型
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (question_id) REFERENCES questions(id)
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  question_id INT NOT NULL,
+  mistake_type ENUM('wrong', 'skipped'), -- 错题类型
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id),
+  FOREIGN KEY (question_id) REFERENCES questions(id)
 );
-
+```
+```
 
 
 初始页面设计
